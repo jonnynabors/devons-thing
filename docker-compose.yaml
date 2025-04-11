@@ -1,5 +1,6 @@
 ---
 services:
+  # Book thing
   calibre:
     image: lscr.io/linuxserver/calibre:latest
     container_name: calibre
@@ -16,6 +17,43 @@ services:
       - 8181:8181
       - 8081:8081
     restart: unless-stopped
+
+  # RustDesk ID/Rendezvous server
+  hbbs:
+    container_name: hbbs
+    ports:
+      - 21115:21115
+      - 21116:21116
+      - 21116:21116/udp
+      - 21118:21118
+    image: rustdesk/rustdesk-server:latest
+    command: hbbs -r rustdesk.example.com:21117
+    volumes:
+      - rustdesk_local:/root
+    networks:
+      - rustdesk-net
+    depends_on:
+      - hbbr
+    restart: unless-stopped
+
+  # RustDesk relay server
+  hbbr:
+    container_name: hbbr
+    ports:
+      - 21117:21117
+      - 21119:21119
+    image: rustdesk/rustdesk-server:latest
+    command: hbbr
+    volumes:
+      - rustdesk_local:/root
+    networks:
+      - rustdesk-net
+    restart: unless-stopped
+
 volumes:
   calibre_local:
+  rustdesk_local:
 
+networks:
+  rustdesk-net:
+    external: false

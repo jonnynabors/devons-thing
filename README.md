@@ -10,4 +10,4 @@
 ```bash
 docker-compose up
 ```
-- Open your browser and go to `http://localhost:8080`
+- Open your browser and go to http://localhost:8080
